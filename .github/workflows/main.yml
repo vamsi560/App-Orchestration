@@ -13,16 +13,9 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Install Dependencies
-      run: |
-       Install-Module -Name Az -Force -Scope CurrentUser -AllowClobber
-       Import-Module -Name Az
-       Uninstall-AzureRm    
-       
-
     - name: Login to Azure Container Registry
       run: |
-        Connect-AzAccount -UseDeviceAuthentication
+        az login --use-device-code
         az acr login --name ${{ secrets.ACR_NAME }}
       shell: powershell
 
