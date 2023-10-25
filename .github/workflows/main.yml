@@ -15,7 +15,7 @@ jobs:
 
     - name: Install Dependencies
       run: |
-       Install-Module -Name Az -Force -Scope CurrentUser
+       Install-Module -Name Az -Force -Scope CurrentUser -AllowClobber
        Import-Module -Name Az
        Uninstall-AzureRm    
        
