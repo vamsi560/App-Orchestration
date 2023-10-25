@@ -3,7 +3,7 @@ name: Docker Image Signing and Push
 on:
   push:
     branches:
-      - main 
+      - main
 
 jobs:
   build-and-sign:
@@ -30,7 +30,7 @@ jobs:
 
     - name: Sign Docker image
       run: |
-        cosign.exe sign -key <path-to-your-key> -a ${{ secrets.ACR_REGISTRY }}/<your-image>:latest my-docker-image:latest
+        echo "${{ secrets.COSIGN_PRIVATE_KEY }}" | cosign sign -key - -a ${{ secrets.ACR_REGISTRY }}/my-docker-image:latest my-docker-image:latest
       env:
         COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
       shell: powershell
@@ -46,17 +46,21 @@ jobs:
 
     - name: Login to Azure Container Registry
       run: |
-        az login --service-principal -u ${{ secrets.AZURE_CLIENT_ID }} -p ${{ secrets.AZURE_CLIENT_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
+        Connect-AzAccount -UseDeviceAuthentication
         az acr login --name ${{ secrets.ACR_NAME }}
-      env:
-        AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-        AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
-        AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-        ACR_NAME: ${{ secrets.ACR_NAME }}
+      shell: powershell
 
-    - name: Pull and push Docker image
+    - name: Build Docker image from Dockerfile
       run: |
-        docker pull my-docker-image:latest
-        docker tag my-docker-image:latest ${{ secrets.ACR_REGISTRY }}/<your-image>:latest
-        docker push ${{ secrets.ACR_REGISTRY }}/<your-image>:latest
+        docker build -t my-docker-image .
+      working-directory: .\  # Use the same directory containing your Dockerfile
+
+    - name: Tag Docker image for ACR
+      run: |
+        docker tag my-docker-image ${{ secrets.ACR_REGISTRY }}/my-docker-image:latest
+      working-directory: .
+
+    - name: Push Docker image to Azure Container Registry
+      run: |
+        docker push ${{ secrets.ACR_REGISTRY }}/my-docker-image:latest
       shell: powershell
