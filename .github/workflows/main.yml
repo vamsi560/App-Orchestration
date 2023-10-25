@@ -33,15 +33,16 @@ jobs:
       with:
         cosign-release: v2.2.0
         
-    - name: Decrypt the private key
-      run: echo "${{ secrets.COSIGN_PRIVATE_KEY }}" | cosign key import --from=- --name mykey
+    - name: Write signing key to disk
+      run: 'echo "$KEY" > cosign.key'
+      shell: bash
       env:
-        COSIGN_PASSWORD: ${{ secrets.COSIGN_PRIVATE_KEY_PASSPHRASE }}
-      working-directory: .\  # Change to the directory containing your Dockerfile
-
+        KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
+        
     - name: Sign the published Docker image
-      run: cosign sign --key mykey ${{ env.REGISTRY }}/${{ github.actor }}/${{ env.IMAGE_NAME }}:${{ github.run_id }}
-      working-directory: .\  # Change to the directory containing your Dockerfile
+      env:
+        COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+      run: cosign sign --key cosign.key ${{ env.REGISTRY }}/${{ github.actor }}/${{ env.IMAGE_NAME }}:${{ github.run_id }}
 
     - name: Tag Docker image for ACR
       run: |
