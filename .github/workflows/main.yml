@@ -34,7 +34,7 @@ jobs:
 
     - name: Sign Docker image using Cosign
       run: |
-        cosign.exe sign -key ${{ secrets.COSIGN_PRIVATE_KEY }} -a ${{ secrets.ACR_REGISTRY }}/my-docker-image:latest my-docker-image:latest
+        cosign.exe sign --key ${{ secrets.COSIGN_PRIVATE_KEY }} -a ${{ secrets.ACR_REGISTRY }}/my-docker-image:latest my-docker-image:latest
       env:
         COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
       shell: powershell
