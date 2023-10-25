@@ -1,4 +1,4 @@
-name: Docker Image Signing and Push
+name: Docker Image Build, Sign, and Push to ACR
 
 on:
   push:
@@ -6,38 +6,7 @@ on:
       - main
 
 jobs:
-  build-and-sign:
-    runs-on: windows-latest
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: Build and push Docker image
-      run: |
-        # Replace these with your Dockerfile path and tag
-        docker build -t my-docker-image:latest .
-        echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
-        docker push my-docker-image:latest
-      shell: powershell
-
-    - name: Install Cosign
-      run: |
-        Invoke-WebRequest -Uri https://github.com/sigstore/cosign/releases/latest/download/cosign-windows-amd64.exe -OutFile cosign.exe
-        Move-Item -Path cosign.exe -Destination $env:USERPROFILE\bin\cosign.exe
-        $env:Path += ";$env:USERPROFILE\bin"
-      shell: powershell
-
-    - name: Sign Docker image
-      run: |
-        echo "${{ secrets.COSIGN_PRIVATE_KEY }}" | cosign sign -key - -a ${{ secrets.ACR_REGISTRY }}/my-docker-image:latest my-docker-image:latest
-      env:
-        COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
-      shell: powershell
-      working-directory: .\  # Change to the directory containing your Dockerfile
-
-  push-to-acr:
-    needs: build-and-sign
+  build-sign-push-to-acr:
     runs-on: windows-latest
 
     steps:
@@ -54,6 +23,14 @@ jobs:
       run: |
         docker build -t my-docker-image .
       working-directory: .\  # Use the same directory containing your Dockerfile
+
+    - name: Sign Docker image using Cosign
+      run: |
+        cosign.exe sign -key ${{ secrets.COSIGN_PRIVATE_KEY }} -a ${{ secrets.ACR_REGISTRY }}/my-docker-image:latest my-docker-image:latest
+      env:
+        COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+      shell: powershell
+      working-directory: .\  # Change to the directory containing your Dockerfile
 
     - name: Tag Docker image for ACR
       run: |
