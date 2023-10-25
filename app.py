@@ -1,10 +1,4 @@
-from flask import Flask
+# app.py
 
-app = Flask(__name__)
+print("Hello, World!")
 
-@app.route('/')
-def hello():
-    return f'Hello, {app.config["cosign"]}!'
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=80)
