@@ -42,8 +42,7 @@ jobs:
 
     - name: Tag signed image for ACR
       run: |
-        docker tag everestdemocontainerregistry.azurecr.io/pa-submission-api@sha256:b8e80df8f361152ce9f0bc2d0ac683f96774f998d47ed99648b5659722e03145
-      continue-on-error: true  # Continue even if the image tagging fails
+        docker tag pa-submission-api everestdemocontainerregistry.azurecr.io/pa-submission-api@sha256:b8e80df8f361152ce9f0bc2d0ac683f96774f998d47ed99648b5659722e03145
 
     - name: Push signed image to ACR
       run: |
