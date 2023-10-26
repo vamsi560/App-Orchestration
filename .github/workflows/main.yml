@@ -14,7 +14,7 @@ jobs:
  
       - name: azure login
         run: |
-          az acr login --use-device-code
+          az login --use-device-code
  
       - uses: azure/docker-login@v1
         with:
