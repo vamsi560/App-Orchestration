@@ -27,7 +27,7 @@ jobs:
 
     - name: Pull image from ACR
       run: |
-        docker pull $REGISTRY/$IMAGE_NAME@sha256:sha256:b8e80df8f361152ce9f0bc2d0ac683f96774f998d47ed99648b5659722e03145
+        docker pull $REGISTRY/$IMAGE_NAME@sha256:b8e80df8f361152ce9f0bc2d0ac683f96774f998d47ed99648b5659722e03145
       continue-on-error: true  # Continue even if the image is not found
 
     - name: cosign-installer
