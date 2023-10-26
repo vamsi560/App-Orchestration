@@ -25,7 +25,7 @@ jobs:
 
     - name: Build Docker image from Dockerfile
       run: |
-        docker build -t my-docker-image .
+        docker build -t pa-submission-api .
       working-directory: .\  # Use the same directory containing your Dockerfile
 
     - name: cosign-installer
