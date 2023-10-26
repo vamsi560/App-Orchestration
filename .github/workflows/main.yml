@@ -42,12 +42,12 @@ jobs:
         
     - name: Tag Docker image for ACR
       run: |
-        docker tag pa-submission-api everestdemocontainerregistry.azurecr.io/pa-submission-api:latest
+        docker tag pa-submission-workflow-api everestdemocontainerregistry.azurecr.io/pa-submission-api:latest
       working-directory: .
 
     - name: Push Docker image to Azure Container Registry
       run: |
-        docker push everestdemocontainerregistry.azurecr.io/pa-submission-api:latest
+        docker push everestdemocontainerregistry.azurecr.io/pa-submission-workflow-api:latest
         
     - name: Display signing results
       if: success()
