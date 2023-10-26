@@ -36,6 +36,6 @@ jobs:
       # Sign the image
       - run: |
           cosign sign --key cosign.key ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc4
-          cosign verify --a=false --key cosign.pub ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc4
+          cosign verify -a=false --key cosign.pub ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc4
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
