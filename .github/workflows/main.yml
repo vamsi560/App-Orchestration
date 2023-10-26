@@ -40,9 +40,6 @@ jobs:
       env:
         COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
 
-    - name: Tag signed image for ACR
-      run: |
-        docker tag pa-submission-workflow-api everestdemocontainerregistry.azurecr.io/pa-submission-workflow-api:latest
 
     - name: Push signed image to ACR
       run: |
