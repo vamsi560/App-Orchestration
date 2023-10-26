@@ -37,7 +37,7 @@ jobs:
 
     - name: Sign the pulled image
       run: |
-        cosign sign --key cosign.key pa-submission-api:latest
+        cosign sign --key cosign.key pa-submission-api@sha256:b8e80df8f361152ce9f0bc2d0ac683f96774f998d47ed99648b5659722e03145
       env:
         COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
 
