@@ -12,7 +12,7 @@ jobs:
     env:
       REGISTRY: everestdemocontainerregistry.azurecr.io
       IMAGE_NAME: pa-submission-api
-      IMAGE_TAG: latest
+      IMAGE_TAG: sha256:b8e80df8f361152ce9f0bc2d0ac683f96774f998d47ed99648b5659722e03145
 
     steps:
     - name: Checkout code
@@ -43,7 +43,7 @@ jobs:
 
     - name: Tag signed image for ACR
       run: |
-        docker tag $REGISTRY/$IMAGE_NAME:$IMAGE_TAG $REGISTRY/$IMAGE_NAME:signed-$IMAGE_TAG
+        docker tag $REGISTRY/$IMAGE_NAME:$IMAGE_TAG $REGISTRY/$IMAGE_NAME@signed-$IMAGE_TAG
       continue-on-error: true  # Continue even if the image tagging fails
 
     - name: Push signed image to ACR
