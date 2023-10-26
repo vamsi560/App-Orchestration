@@ -11,7 +11,7 @@ jobs:
 
     env:
       REGISTRY: everestdemocontainerregistry.azurecr.io
-      IMAGE_NAME: pa-submission-api
+      IMAGE_NAME: pa-submission-workflow-api
       IMAGE_TAG: sha256:b8e80df8f361152ce9f0bc2d0ac683f96774f998d47ed99648b5659722e03145
 
     steps:
@@ -47,7 +47,7 @@ jobs:
 
     - name: Push Docker image to Azure Container Registry
       run: |
-        docker push everestdemocontainerregistry.azurecr.io/pa-submission-workflow-api:1
+        docker push everestdemocontainerregistry.azurecr.io/pa-submission-workflow-api
         
     - name: Display signing results
       if: success()
