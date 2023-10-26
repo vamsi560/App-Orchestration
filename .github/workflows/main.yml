@@ -36,17 +36,17 @@ jobs:
 
     - name: Sign the pulled image
       run: |
-        cosign sign --key cosign.key everestdemocontainerregistry.azurecr.io/pa-submission-api@sha256:b8e80df8f361152ce9f0bc2d0ac683f96774f998d47ed99648b5659722e03145
+        cosign sign --key cosign.key everestdemocontainerregistry.azurecr.io/pa-submission-workflow-api@sha256:b8e80df8f361152ce9f0bc2d0ac683f96774f998d47ed99648b5659722e03145
       env:
         COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
 
     - name: Tag signed image for ACR
       run: |
-        docker tag pa-submission-api everestdemocontainerregistry.azurecr.io/pa-submission-api:latest
+        docker tag pa-submission-workflow-api everestdemocontainerregistry.azurecr.io/pa-submission-workflow-api:latest
 
     - name: Push signed image to ACR
       run: |
-        docker push everestdemocontainerregistry.azurecr.io/pa-submission-api:latest
+        docker push everestdemocontainerregistry.azurecr.io/pa-submission-workflow-api:latest
       env:
         ACR_USERNAME: ${{ secrets.ACR_USERNAME }}
         ACR_PASSWORD: ${{ secrets.ACR_PASSWORD }}
