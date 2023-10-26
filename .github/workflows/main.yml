@@ -9,7 +9,7 @@ jobs:
   build-sign-push-to-acr:
     runs-on: windows-latest
 
-    env:  # Define environment variables
+    env:
       REGISTRY: everestdemocontainerregistry.azurecr.io
       IMAGE_NAME: my-docker-image
 
@@ -17,16 +17,17 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Login to Azure Container Registry
-      run: |
-        az login --use-device-code
-        az acr login --name ${{ secrets.ACR_NAME }}
-      shell: powershell
-
     - name: Build Docker image from Dockerfile
       run: |
         docker build -t my-docker-image .
-      working-directory: .\  # Use the same directory containing your Dockerfile
+      working-directory: .
+
+    - name: Push Docker image to Azure Container Registry
+      run: |
+        docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }} ${{ env.REGISTRY }}
+        docker push ${{ env.REGISTRY }}/${{ IMAGE_NAME }}
+      shell: bash
+      working-directory: .
 
     - name: cosign-installer
       uses: sigstore/cosign-installer@v3.1.2
@@ -39,17 +40,17 @@ jobs:
       env:
         KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
 
-    - name: Sign the Docker image
+    - name: Sign the published Docker image
       env:
         COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
-      run: cosign sign --key cosign.key ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+      run: cosign sign --key cosign.key ${{ env.REGISTRY }}/${{ IMAGE_NAME }}:latest
 
     - name: Tag Docker image for ACR
       run: |
-        docker tag my-docker-image ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+        docker tag my-docker-image ${{ env.REGISTRY }}/${{ IMAGE_NAME }}:latest
       working-directory: .
 
     - name: Push Docker image to Azure Container Registry
       run: |
-        docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-      shell: powershell
+        docker push ${{ env.REGISTRY }}/${{ IMAGE_NAME }}:latest
+      shell: bash
