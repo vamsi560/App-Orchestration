@@ -25,31 +25,31 @@ jobs:
 
     - name: Build Docker image from Dockerfile
       run: |
-        docker build -t pa-submission-api .
+        docker build -t my-docker-image .
       working-directory: .\  # Use the same directory containing your Dockerfile
 
     - name: cosign-installer
       uses: sigstore/cosign-installer@v3.1.2
       with:
         cosign-release: v2.2.0
-        
+
     - name: Write signing key to disk
       run: 'echo "$KEY" > cosign.key'
       shell: bash
       env:
         KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
-        
-    - name: Sign the published Docker image
+
+    - name: Sign the Docker image
       env:
         COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
-      run: cosign sign --key cosign.key everestdemocontainerregistry.azurecr.io/pa-submission-workflow-api:latest
+      run: cosign sign --key cosign.key ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
 
     - name: Tag Docker image for ACR
       run: |
-        docker tag pa-submission-workflow everestdemocontainerregistry.azurecr.io/pa-submission-workflow:latest
+        docker tag my-docker-image ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
       working-directory: .
 
     - name: Push Docker image to Azure Container Registry
       run: |
-        docker push everestdemocontainerregistry.azurecr.io/pa-submission-workflow:latest
+        docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
       shell: powershell
