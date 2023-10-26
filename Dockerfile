@@ -1,5 +1,5 @@
 # Use the official Python image for Windows as a parent image
-FROM python:3.8-windowsservercore
+FROM python:3.8-slim
 
 # Copy the current directory contents into the container at C:\app
 COPY . \app
