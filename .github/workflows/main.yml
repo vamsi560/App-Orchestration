@@ -11,7 +11,7 @@ jobs:
 
     env:  # Define environment variables
       REGISTRY: everestdemocontainerregistry.azurecr.io
-      IMAGE_NAME: my-docker-image
+      IMAGE_NAME: my-docker-image:latest
 
     steps:
     - name: Checkout code
