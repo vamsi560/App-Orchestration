@@ -37,7 +37,7 @@ jobs:
 
     - name: Sign the pulled image
       run: |
-        cosign sign -key cosign.key pa-submission-api:latest
+        cosign sign --key cosign.key pa-submission-api:latest
       env:
         COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
 
