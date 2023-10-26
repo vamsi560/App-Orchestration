@@ -1,4 +1,4 @@
-name: Docker Image Build, Sign, and Push to ACR
+name: Docker Image Sign and Push to ACR
 
 on:
   push:
@@ -9,41 +9,46 @@ jobs:
   build-sign-push-to-acr:
     runs-on: ubuntu-latest
 
+    env:
+      REGISTRY: everestdemocontainerregistry.azurecr.io
+      IMAGE_NAME: pa-submission-api
+      IMAGE_TAG: latest
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v1.6.0
-
-    - name: Build Docker image
+    - name: Login to Azure Container Registry
       run: |
-        docker build -t my-docker-image .
-      working-directory: ./  # Use the same directory containing your Dockerfile
+        echo ${{ secrets.ACR_PASSWORD }} | docker login $REGISTRY -u ${{ secrets.ACR_USERNAME }} --password-stdin
+      env:
+        ACR_USERNAME: ${{ secrets.ACR_USERNAME }}
+        ACR_PASSWORD: ${{ secrets.ACR_PASSWORD }}
+
+    - name: Pull image from ACR
+      run: |
+        docker pull $REGISTRY/$IMAGE_NAME:$IMAGE_TAG
+      continue-on-error: true  # Continue even if the image is not found
 
     - name: cosign-installer
-      uses: sigstore/cosign-installer@v3.1.2
+      uses: sigstore/cosign-installer@v2.2.0  
       with:
-        cosign-release: v2.2.0
+        cosign-release: v2.2.0  
 
-    - name: Sign Docker image using Cosign
+    - name: Sign the pulled image
       run: |
-        cosign sign --key cosign.key my-docker-image:latest
+        cosign sign -key cosign.key $REGISTRY/$IMAGE_NAME:$IMAGE_TAG
       env:
         COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
 
-    - name: Login to Azure Container Registry
-      uses: azure/docker-login@v1
-      with:
-        login-server: ${{ secrets.ACR_REGISTRY }}
-        username: ${{ secrets.ACR_USERNAME }}
-        password: ${{ secrets.ACR_PASSWORD }}
-
-    - name: Tag Docker image for ACR
+    - name: Tag signed image for ACR
       run: |
-        docker tag my-docker-image ${{ secrets.ACR_REGISTRY }}/my-docker-image:latest
-      working-directory: .
+        docker tag $REGISTRY/$IMAGE_NAME:$IMAGE_TAG $REGISTRY/$IMAGE_NAME:signed-$IMAGE_TAG
+      continue-on-error: true  # Continue even if the image tagging fails
 
-    - name: Push Docker image to Azure Container Registry
+    - name: Push signed image to ACR
       run: |
-        docker push ${{ secrets.ACR_REGISTRY }}/my-docker-image:latest
+        docker push $REGISTRY/$IMAGE_NAME:signed-$IMAGE_TAG
+      env:
+        ACR_USERNAME: ${{ secrets.ACR_USERNAME }}
+        ACR_PASSWORD: ${{ secrets.ACR_PASSWORD }}
