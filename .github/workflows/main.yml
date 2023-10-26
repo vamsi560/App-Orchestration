@@ -24,7 +24,12 @@ jobs:
  
       # Build the image
       - run: docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc1 .
- 
+      
+      - name: cosign-installer
+        uses: sigstore/cosign-installer@v2.2.0  
+        with:
+          cosign-release: v2.2.0  
+
       # Sign the image
       - run: cosign sign --key cosign.key ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc1
  
