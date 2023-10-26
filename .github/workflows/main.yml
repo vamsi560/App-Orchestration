@@ -1,51 +1,32 @@
-name: Docker Image Sign and Push to ACR
-
+name: Build, sign, and push container image
+ 
 on:
   push:
     branches:
       - main
-
+ 
 jobs:
-  build-sign-push-to-acr:
+  build:
     runs-on: ubuntu-latest
-
-    env:
-      REGISTRY: everestdemocontainerregistry.azurecr.io
-      IMAGE_NAME: pa-submission-workflow-api
-      IMAGE_TAG: sha256:b8e80df8f361152ce9f0bc2d0ac683f96774f998d47ed99648b5659722e03145
-
+ 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: Log in to Azure Container Registry
-      uses: docker/login-action@v1
-      with:
-        registry: ${{ secrets.ACR_REGISTRY }}
-        username: ${{ secrets.ACR_USERNAME }}
-        password: ${{ secrets.ACR_PASSWORD }}
-
-    - name: Pull image from ACR
-      run: |
-        docker pull everestdemocontainerregistry.azurecr.io/pa-submission-workflow-api@sha256:b8e80df8f361152ce9f0bc2d0ac683f96774f998d47ed99648b5659722e03145
-
-    - name: cosign-installer
-      uses: sigstore/cosign-installer@v2.2.0  
-      with:
-        cosign-release: v2.2.0  
-
-    - name: Sign the pulled image
-      run: |
-        COSIGN_TLOG="0" echo 'y' | cosign sign --key cosign.key everestdemocontainerregistry.azurecr.io/pa-submission-workflow-api@sha256:b8e80df8f361152ce9f0bc2d0ac683f96774f998d47ed99648b5659722e03145
-        docker tag everestdemocontainerregistry.azurecr.io/pa-submission-workflow-api@sha256:b8e80df8f361152ce9f0bc2d0ac683f96774f998d47ed99648b5659722e03145 everestdemocontainerregistry.azurecr.io/pa-submission-workflow-api:cosign3
-        docker push everestdemocontainerregistry.azurecr.io/pa-submission-workflow-api:cosign3
-      env:
-        COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
-        
-    - name: Display signing results
-      if: success()
-      run: echo "Docker image signing successful!"
-    
-    - name: Display signing failure
-      if: failure()
-      run: echo "Docker image signing failed. Please check the signing key and configuration."
+      - uses: actions/checkout@v3
+ 
+      - uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+ 
+      - uses: azure/docker-login@v1
+        with:
+          login-server: ${{ secrets.ACR_LOGIN_SERVER }}
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+ 
+      # Build the image
+      - run: docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/${{ github.repository }}:${{ github.sha }} .
+ 
+      # Sign the image
+      - run: cosign sign --key cosign.key ${{ secrets.ACR_LOGIN_SERVER }}/${{ github.repository }}:${{ github.sha }}
+ 
+      # Push the image to Azure Container Registry
+      - run: docker push ${{ secrets.ACR_LOGIN_SERVER }}/${{ github.repository }}:${{ github.sha }}
