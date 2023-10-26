@@ -41,7 +41,7 @@ jobs:
         COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
         
     - name: Verify Container Image
-      run: cosign verify --key ./cosign.pub everestdemocontainerregistry.azurecr.io/pa-submission-workflow-api@sha256:b8e80df8f361152ce9f0bc2d0ac683f96774f998d47ed99648b5659722e03145
+      run: cosign verify --key cosign.pub everestdemocontainerregistry.azurecr.io/pa-submission-workflow-api@sha256:b8e80df8f361152ce9f0bc2d0ac683f96774f998d47ed99648b5659722e03145
         
     - name: Tag Docker image for ACR
       run: |
