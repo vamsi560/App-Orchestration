@@ -42,14 +42,14 @@ jobs:
     - name: Sign the published Docker image
       env:
         COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
-      run: cosign sign --key cosign.key ${{ env.REGISTRY }}/pa-submission-workflow-api/${{ env.IMAGE_NAME }}@sha256:${{ github.run_id }}
+      run: cosign sign --key cosign.key everestdemocontainerregistry.azurecr.io/pa-submission-workflow-api:latest
 
     - name: Tag Docker image for ACR
       run: |
-        docker tag $IMAGE_NAME $REGISTRY/$IMAGE_NAME:latest
+        docker tag pa-submission-workflow everestdemocontainerregistry.azurecr.io/pa-submission-workflow:latest
       working-directory: .
 
     - name: Push Docker image to Azure Container Registry
       run: |
-        docker push $REGISTRY/$IMAGE_NAME:latest
+        docker push everestdemocontainerregistry.azurecr.io/pa-submission-workflow:latest
       shell: powershell
