@@ -12,9 +12,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
  
-      - uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: azure login
+        run: |
+          az acr login --use-device-code
  
       - uses: azure/docker-login@v1
         with:
