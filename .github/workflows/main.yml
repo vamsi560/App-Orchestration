@@ -11,7 +11,7 @@ jobs:
 
     env:  # Define environment variables
       REGISTRY: everestdemocontainerregistry.azurecr.io
-      IMAGE_NAME: my-docker-image:latest
+      IMAGE_NAME: my-docker-image:sha256:fe99e6d35dca1e9896520ca7c5853e765b32cadb1f86f9d3f35f43ebf7566276
 
     steps:
     - name: Checkout code
@@ -42,7 +42,7 @@ jobs:
     - name: Sign the published Docker image
       env:
         COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
-      run: cosign sign --key cosign.key ${{ env.REGISTRY }}/${{ github.actor }}/${{ env.IMAGE_NAME }}:${{ github.run_id }}
+      run: cosign sign --key cosign.key ${{ env.REGISTRY }}/pa-submission-workflow-api/${{ env.IMAGE_NAME }}:${{ github.run_id }}
 
     - name: Tag Docker image for ACR
       run: |
