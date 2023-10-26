@@ -32,6 +32,8 @@ jobs:
 
       # Sign the image
       - run: cosign sign --key cosign.key ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc1
+        env:
+          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
  
       # Push the image to Azure Container Registry
       - run: docker push ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc1
