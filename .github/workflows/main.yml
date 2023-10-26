@@ -42,7 +42,7 @@ jobs:
         
     - name: Tag Docker image for ACR
       run: |
-        docker tag everestdemocontainerregistry.azurecr.io/pa-submission-workflow-api@sha256:b8e80df8f361152ce9f0bc2d0ac683f96774f998d47ed99648b5659722e03145 ***.azurecr.io/pa-submission-workflow-api
+        docker tag everestdemocontainerregistry.azurecr.io/pa-submission-workflow-api@sha256:b8e80df8f361152ce9f0bc2d0ac683f96774f998d47ed99648b5659722e03145 everestdemocontainerregistry.azurecr.io/pa-submission-workflow-api
       working-directory: .
 
     - name: Push Docker image to Azure Container Registry
