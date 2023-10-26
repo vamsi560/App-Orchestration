@@ -42,12 +42,20 @@ jobs:
 
     - name: Tag signed image for ACR
       run: |
-        docker tag $REGISTRY/$IMAGE_NAME:$IMAGE_TAG $REGISTRY/$IMAGE_NAME@signed-$IMAGE_TAG
+        docker tag everestdemocontainerregistry.azurecr.io/pa-submission-api@sha256:b8e80df8f361152ce9f0bc2d0ac683f96774f998d47ed99648b5659722e03145
       continue-on-error: true  # Continue even if the image tagging fails
 
     - name: Push signed image to ACR
       run: |
-        docker push $REGISTRY/$IMAGE_NAME:signed-$IMAGE_TAG
+        docker push everestdemocontainerregistry.azurecr.io/pa-submission-api@sha256:b8e80df8f361152ce9f0bc2d0ac683f96774f998d47ed99648b5659722e03145
       env:
         ACR_USERNAME: ${{ secrets.ACR_USERNAME }}
         ACR_PASSWORD: ${{ secrets.ACR_PASSWORD }}
+        
+    - name: Display signing results
+      if: success()
+      run: echo "Docker image signing successful!"
+    
+    - name: Display signing failure
+      if: failure()
+      run: echo "Docker image signing failed. Please check the signing key and configuration."
