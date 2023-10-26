@@ -23,10 +23,10 @@ jobs:
           password: ${{ secrets.ACR_PASSWORD }}
  
       # Build the image
-      - run: docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc4 .
+      - run: docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc5 .
  
       # Push the image to Azure Container Registry
-      - run: docker push ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc4
+      - run: docker push ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc5
       
       - name: cosign-installer
         uses: sigstore/cosign-installer@v2.2.0  
@@ -35,7 +35,7 @@ jobs:
 
       # Sign the image
       - run: |
-          cosign sign --key cosign.key ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc4
-          cosign verify -a=false --key cosign.pub ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc4
+          cosign sign --key cosign.key ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc5
+          cosign verify -a --key cosign.pub ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc5
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
