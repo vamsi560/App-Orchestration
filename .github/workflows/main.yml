@@ -53,7 +53,6 @@ jobs:
       # Sign the image
       - name: Sign the image and get digest
         run: |
-          IMAGE_NAME=$(cat $GITHUB_ENV | grep IMAGE_NAME | cut -d '=' -f 2)
           cosign sign --key cosign.key $IMAGE_NAME
           FULL_DIGEST=$(docker inspect --format '{{index .RepoDigests 0}}' $IMAGE_NAME)
           DIGEST=$(echo $FULL_DIGEST | cut -d "@" -f 2)
