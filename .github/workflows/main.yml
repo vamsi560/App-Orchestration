@@ -23,10 +23,10 @@ jobs:
           password: ${{ secrets.ACR_PASSWORD }}
  
       # Build the image
-      - run: docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc5 .
+      - run: docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6 .
  
       # Push the image to Azure Container Registry
-      - run: docker push ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc5
+      - run: docker push ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6
       
       - name: cosign-installer
         uses: sigstore/cosign-installer@v2.2.0  
@@ -34,8 +34,22 @@ jobs:
           cosign-release: v2.2.0  
 
       # Sign the image
-      - run: |
-          cosign sign --key cosign.key ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc5
-          cosign verify --key cosign.pub ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc5
+      - name: Sign the image and get digest
+        run: |
+          SIGNED_IMAGE=${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6
+          cosign sign --key cosign.key $SIGNED_IMAGE
+          DIGEST=$(docker inspect --format '{{index .RepoDigests 0}}' $SIGNED_IMAGE)
+          echo "DIGEST=$DIGEST" >> $GITHUB_ENV
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+          
+      - name: Save digest to a file
+        run: |
+          echo "$DIGEST" > digest.txt
+          working-directory: ${{ runner.workspace }}
+
+      - name: Upload digest file as an artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: signed-image-digest
+          path: ${{ runner.workspace }}/digest.txt
