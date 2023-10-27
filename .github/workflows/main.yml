@@ -11,6 +11,13 @@ jobs:
  
     steps:
       - uses: actions/checkout@v3
+
+      - name: Configure Git
+        run: |
+          git config --global user.email "vamsi.sapireddy@outlook.com"
+          git config --global user.name "vamsi560"
+        env:
+          CI: true
  
       - name: azure login
         run: |
@@ -44,13 +51,11 @@ jobs:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
           
       - name: Save digest to a file
-        env:
-          GH_TOKEN: ${{ secrets.COSIGN_TOKEN }}
         run: |
           echo "$DIGEST" > digest.txt
-          git config --global user.email "vamsi.sapireddy@outlook.com"
-          git config --global user.name "vamsi560"
           git add digest.txt
           git commit -m "Add digest.txt"
           git push
-           git push https://$GH_TOKEN@github.com/vamsi560/CosignimageSigning.git HEAD:main
+        env:
+          GH_TOKEN: ${{ secrets.COSIGN_TOKEN }}
+
