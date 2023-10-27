@@ -38,10 +38,9 @@ jobs:
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
 
-      # Push the image to Azure Container Registry
       - name: Push the image to ACR
         run: |
-          IMAGE_NAME=$(cat $GITHUB_ENV | grep IMAGE_NAME | cut -d '=' -f 2)
+          IMAGE_NAME=${{ env.IMAGE_NAME }}
           docker push $IMAGE_NAME
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
