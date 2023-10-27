@@ -57,5 +57,5 @@ jobs:
           git commit -m "Add digest.txt"
           git push
         env:
-          GH_TOKEN: ${{ secrets.COSIGN_TOKEN }}
+          COSIGN_TOKEN: ${{ secrets.COSIGN_TOKEN }}
 
