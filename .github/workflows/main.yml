@@ -45,7 +45,8 @@ jobs:
         run: |
           SIGNED_IMAGE=${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6
           cosign sign --key cosign.key $SIGNED_IMAGE
-          DIGEST=$(docker inspect --format '{{index .RepoDigests 0}}' $SIGNED_IMAGE)
+          FULL_DIGEST=$(docker inspect --format '{{index .RepoDigests 0}}' $SIGNED_IMAGE)
+          DIGEST=$(echo $FULL_DIGEST | cut -d "@" -f 2)
           echo "DIGEST=$DIGEST" >> $GITHUB_ENV
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
