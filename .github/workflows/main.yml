@@ -46,6 +46,8 @@ jobs:
       - name: Save digest to a file
         run: |
           echo "$DIGEST" > digest.txt
+          git config --global user.email "vamsi.sapireddy@outlook.com"
+          git config --global user.name "vamsi560"
           git add digest.txt
           git commit -m "Add digest.txt"
           git push
