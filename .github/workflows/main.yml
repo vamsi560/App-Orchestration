@@ -38,13 +38,6 @@ jobs:
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
 
-      - name: Push the image to ACR
-        run: |
-          IMAGE_NAME=${{ env.IMAGE_NAME }}
-          docker push $IMAGE_NAME
-        env:
-          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
-
       - name: cosign-installer
         uses: sigstore/cosign-installer@v2.2.0
         with:
@@ -53,6 +46,7 @@ jobs:
       # Sign the image
       - name: Sign the image and get digest
         run: |
+          IMAGE_NAME=${{ env.IMAGE_NAME }}
           cosign sign --key cosign.key $IMAGE_NAME
           FULL_DIGEST=$(docker inspect --format '{{index .RepoDigests 0}}' $IMAGE_NAME)
           DIGEST=$(echo $FULL_DIGEST | cut -d "@" -f 2)
@@ -67,13 +61,10 @@ jobs:
         env:
           COSIGN_TOKEN: ${{ secrets.COSIGN_TOKEN }}
 
-      # Push the signed image to Azure Container Registry
-      - name: Push the signed image to ACR
+      # Push the Docker image to ACR
+      - name: Push the Docker image to ACR
         run: |
-          DIGEST=$(cat digest.txt)
-          IMAGE_NAME="${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6@$DIGEST"
-          docker pull $IMAGE_NAME
-          docker tag $IMAGE_NAME $IMAGE_NAME
+          IMAGE_NAME=${{ env.IMAGE_NAME }}
           docker push $IMAGE_NAME
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
