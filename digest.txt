@@ -1,0 +1,1 @@
+everestdemocontainerregistry.azurecr.io/cosign@sha256:ead5ac5e08dc406369591aeb52867a83d365677aa7d5b1e9acb7fca0dc52cc9d
