@@ -10,7 +10,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout Code
+        uses: actions/checkout@v2
 
       - name: Configure Git
         run: |
@@ -18,7 +19,7 @@ jobs:
           git config --global user.name "vamsi560"
         env:
           CI: true
-          
+
       - name: Log in to Docker Hub
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_ACCESS_TOKEN }}
@@ -56,10 +57,9 @@ jobs:
         env:
           COSIGN_TOKEN: ${{ secrets.COSIGN_TOKEN }}
 
-      # Load the signed image and push it to Azure Container Registry
       - name: Load and push the signed image to ACR
         run: |
-          docker load -i /image/image.tar
+          docker pull "vamsisss/cosign:abc6"
           docker tag "vamsisss/cosign:abc6" "${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6"
           docker push "${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6"
         env:
