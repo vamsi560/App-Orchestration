@@ -64,7 +64,7 @@ jobs:
           
       - name: Verify image signing
         run: |
-          cosign verify --key cosign.key -a cosign.pub $SIGNED_IMAGE
+          cosign verify --key cosign.key -a cosign.pub vamsisss/cosign:abc6
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
 
