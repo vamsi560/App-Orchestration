@@ -51,20 +51,12 @@ jobs:
         with:
           cosign-release: v2.2.0
 
-      # Sign the image
-      - name: Sign the image and get digest
+      - name: Sign and push the image to ACR
         run: |
-          SIGNED_IMAGE="vamsisss/cosign:abc6"
-          cosign sign --key cosign.key --yes $SIGNED_IMAGE
-          FULL_DIGEST=$(docker inspect --format '{{index .RepoDigests 0}}' "$SIGNED_IMAGE")
-          DIGEST=$(echo "$FULL_DIGEST" | cut -d "@" -f 2)
-          echo "DIGEST=$DIGEST" >> $GITHUB_ENV
-        env:
-          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
-          
-      - name: Verify image signing
-        run: |
-          cosign verify --key cosign.key -a cosign.pub vamsisss/cosign:abc6
+          docker build -t myapp:signed .
+          cosign sign -key cosign.key myapp:signed
+          docker tag myapp:signed "${{ secrets.ACR_LOGIN_SERVER }}/myapp:signed"
+          docker push "${{ secrets.ACR_LOGIN_SERVER }}/myapp:signed"
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
 
@@ -73,11 +65,3 @@ jobs:
           echo "$DIGEST" > digest.txt
         env:
           COSIGN_TOKEN: ${{ secrets.COSIGN_TOKEN }}
-
-      - name: Load and push the signed image to ACR
-        run: |
-          docker pull "vamsisss/cosign:abc6"
-          docker tag "vamsisss/cosign:abc6" "${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6"
-          docker push "${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6"
-        env:
-          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
