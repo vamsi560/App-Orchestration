@@ -23,11 +23,12 @@ jobs:
         run: |
           docker build -t cosign:abc6 .
           IMAGE_ID=$(docker create cosign:abc6)
-          mkdir /image
-          docker export "$IMAGE_ID" -o "/image/image.tar"
+          mkdir my_image
+          docker export "$IMAGE_ID" -o "my_image/image.tar"
           docker rm -v "$IMAGE_ID"
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+
 
       - name: cosign-installer
         uses: sigstore/cosign-installer@v2.2.0
