@@ -54,7 +54,7 @@ jobs:
       - name: Sign and push the image to ACR
         run: |
           docker build -t myapp:signed .
-          cosign sign -key cosign.key myapp:signed
+          cosign sign -key cosign.key --true myapp:signed
           docker tag myapp:signed "${{ secrets.ACR_LOGIN_SERVER }}/myapp:signed"
           docker push "${{ secrets.ACR_LOGIN_SERVER }}/myapp:signed"
         env:
