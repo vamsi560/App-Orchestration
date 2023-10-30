@@ -57,9 +57,17 @@ jobs:
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
 
+      - name: Pull the signed image
+        run: |
+          docker pull vamsisss/cosign:abc6
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_ACCESS_TOKEN: ${{ secrets.DOCKER_ACCESS_TOKEN }}
+
       - name: Push the signed image to ACR
         run: |
-          docker tag cosign:signed "${{ secrets.ACR_LOGIN_SERVER }}/cosign:signed"
+          docker tag vamsisss/cosign:abc6 "${{ secrets.ACR_LOGIN_SERVER }}/cosign:signed"
           docker push "${{ secrets.ACR_LOGIN_SERVER }}/cosign:signed"
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+
