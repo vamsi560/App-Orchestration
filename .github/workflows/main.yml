@@ -48,6 +48,7 @@ jobs:
         run: |
           # Retrieve the image ID from the variable
           IMAGE_ID="$IMAGE_ID"
+          echo "Signing image with ID: $IMAGE_ID"
           # Sign the image
           cosign sign --key cosign.key $IMAGE_ID
         env:
