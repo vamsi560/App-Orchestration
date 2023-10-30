@@ -33,9 +33,8 @@ jobs:
         run: |
           # Build the image
           docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6 .
-          IMAGE_ID=$(docker images -q cosign:abc6)
           IMAGE_TAG=cosign:abc6
-          echo "Signing image with ID: $IMAGE_ID"
+          echo "Signing image with tag: $IMAGE_TAG"
         env:
           ACR_USERNAME: ${{ secrets.ACR_USERNAME }}
           ACR_PASSWORD: ${{ secrets.ACR_PASSWORD }}
@@ -48,8 +47,6 @@ jobs:
       - name: Sign the image
         run: |
           # Retrieve the image ID from the variable
-          IMAGE_ID="$IMAGE_ID"
-          echo "Signing image with ID: $IMAGE_ID"
           # Sign the image
           cosign sign --key cosign.key $IMAGE_TAG
         env:
