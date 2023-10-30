@@ -31,9 +31,6 @@ jobs:
  
       # Build the image
       - run: docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6 .
- 
-      # Push the image to Azure Container Registry
-      - run: docker push ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6
       
       - name: cosign-installer
         uses: sigstore/cosign-installer@v2.2.0  
@@ -50,6 +47,9 @@ jobs:
           echo "DIGEST=$DIGEST" >> $GITHUB_ENV
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+          
+      # Push the image to Azure Container Registry
+      - run: docker push ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6
           
       - name: Save digest to a file
         run: |
