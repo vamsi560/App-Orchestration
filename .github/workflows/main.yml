@@ -33,7 +33,7 @@ jobs:
         run: |
           # Build the image
           docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6 .
-          IMAGE_ID=$(docker images -q cosign:latest)
+          IMAGE_ID=$(docker images -q cosign:abc6)
           echo "IMAGE_ID=$IMAGE_ID" >> $GITHUB_ENV
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
