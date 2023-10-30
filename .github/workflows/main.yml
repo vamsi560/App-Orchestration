@@ -40,8 +40,8 @@ jobs:
 
       - name: Build the image
         run: |
-          docker build -t vamsisss/cosign:signed .
-          docker push vamsisss/cosign:signed
+          docker build -t vamsisss/cosign:abc6 .
+          docker push vamsisss/cosign:abc6
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_ACCESS_TOKEN: ${{ secrets.DOCKER_ACCESS_TOKEN }}
@@ -51,23 +51,12 @@ jobs:
         with:
           cosign-release: v2.2.0
 
-      - name: Sign the image
+      - name: Sign and push the image to ACR
         run: |
-          cosign sign --key cosign.key --yes vamsisss/cosign:signed
-        env:
-          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
-
-      - name: Pull the signed image
-        run: |
-          docker pull vamsisss/cosign:abc6
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_ACCESS_TOKEN: ${{ secrets.DOCKER_ACCESS_TOKEN }}
-
-      - name: Push the signed image to ACR
-        run: |
-          docker tag vamsisss/cosign:abc6 "${{ secrets.ACR_LOGIN_SERVER }}/cosign:signed"
-          docker push "${{ secrets.ACR_LOGIN_SERVER }}/cosign:signed"
+          SIGNED_IMAGE="cosign:abc6"
+          cosign sign --key cosign.key --yes $SIGNED_IMAGE
+          docker tag $SIGNED_IMAGE "${{ secrets.ACR_LOGIN_SERVER }}/$SIGNED_IMAGE"
+          docker push "${{ secrets.ACR_LOGIN_SERVER }}/$SIGNED_IMAGE"
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
 
