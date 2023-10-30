@@ -41,6 +41,7 @@ jobs:
       - name: Build the image
         run: |
           docker build -t vamsisss/cosign:signed .
+          docker push vamsisss/cosign:signed
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_ACCESS_TOKEN: ${{ secrets.DOCKER_ACCESS_TOKEN }}
