@@ -1,14 +1,14 @@
 name: Build, sign, and push container image
- 
+
 on:
   push:
     branches:
       - main
- 
+
 jobs:
-  build:
+  build-sign-push:
     runs-on: ubuntu-latest
- 
+
     steps:
       - uses: actions/checkout@v3
 
@@ -18,44 +18,44 @@ jobs:
           git config --global user.name "vamsi560"
         env:
           CI: true
- 
-      - name: azure login
+
+      - name: Build the image
         run: |
-          az login --use-device-code
- 
-      - uses: azure/docker-login@v1
-        with:
-          login-server: ${{ secrets.ACR_LOGIN_SERVER }}
-          username: ${{ secrets.ACR_USERNAME }}
-          password: ${{ secrets.ACR_PASSWORD }}
- 
-      # Build the image
-      - run: docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6 .
-      
+          docker build -t cosign:abc6 .
+          IMAGE_ID=$(docker create cosign:abc6)
+          mkdir /image
+          docker export "$IMAGE_ID" -o "/image/image.tar"
+          docker rm -v "$IMAGE_ID"
+        env:
+          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+
       - name: cosign-installer
-        uses: sigstore/cosign-installer@v2.2.0  
+        uses: sigstore/cosign-installer@v2.2.0
         with:
-          cosign-release: v2.2.0  
+          cosign-release: v2.2.0
 
       # Sign the image
       - name: Sign the image and get digest
         run: |
-          SIGNED_IMAGE=${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6
-          cosign sign --key cosign.key $SIGNED_IMAGE
-          FULL_DIGEST=$(docker inspect --format '{{index .RepoDigests 0}}' $SIGNED_IMAGE)
-          DIGEST=$(echo $FULL_DIGEST | cut -d "@" -f 2)
+          SIGNED_IMAGE="cosign:abc6"
+          cosign sign --key cosign.key "$SIGNED_IMAGE"
+          FULL_DIGEST=$(docker inspect --format '{{index .RepoDigests 0}}' "$SIGNED_IMAGE")
+          DIGEST=$(echo "$FULL_DIGEST" | cut -d "@" -f 2)
           echo "DIGEST=$DIGEST" >> $GITHUB_ENV
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
-          
-      # Push the image to Azure Container Registry
-      - run: docker push ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6
-          
+
       - name: Save digest to a file
         run: |
           echo "$DIGEST" > digest.txt
-          git add digest.txt
-          git commit -m "Add digest.txt"
-          git push
         env:
           COSIGN_TOKEN: ${{ secrets.COSIGN_TOKEN }}
+
+      # Load the signed image and push it to Azure Container Registry
+      - name: Load and push the signed image to ACR
+        run: |
+          docker load -i /image/image.tar
+          docker tag cosign:abc6 "${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6"
+          docker push "${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6"
+        env:
+          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
