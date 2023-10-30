@@ -40,8 +40,7 @@ jobs:
 
       - name: Build the image
         run: |
-          docker build -t vamsisss/cosign:abc6 .
-          docker push vamsisss/cosign:abc6
+          docker build -t vamsisss/cosign:signed .
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_ACCESS_TOKEN: ${{ secrets.DOCKER_ACCESS_TOKEN }}
@@ -51,17 +50,15 @@ jobs:
         with:
           cosign-release: v2.2.0
 
-      - name: Sign and push the image to ACR
+      - name: Sign the image
         run: |
-          docker build -t myapp:signed .
-          cosign sign -key cosign.key --true myapp:signed
-          docker tag myapp:signed "${{ secrets.ACR_LOGIN_SERVER }}/myapp:signed"
-          docker push "${{ secrets.ACR_LOGIN_SERVER }}/myapp:signed"
+          cosign sign -key cosign.key myapp:signed
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
 
-      - name: Save digest to a file
+      - name: Push the signed image to ACR
         run: |
-          echo "$DIGEST" > digest.txt
+          docker tag myapp:signed "${{ secrets.ACR_LOGIN_SERVER }}/cosign:signed"
+          docker push "${{ secrets.ACR_LOGIN_SERVER }}/myapp:signed"
         env:
-          COSIGN_TOKEN: ${{ secrets.COSIGN_TOKEN }}
+          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
