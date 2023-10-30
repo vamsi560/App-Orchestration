@@ -53,7 +53,7 @@ jobs:
 
       - name: Sign and push the image to ACR
         run: |
-          SIGNED_IMAGE="cosign:abc6"
+          SIGNED_IMAGE="vamsisss/cosign:abc6"
           cosign sign --key cosign.key --yes $SIGNED_IMAGE
           docker tag $SIGNED_IMAGE "${{ secrets.ACR_LOGIN_SERVER }}/$SIGNED_IMAGE"
           docker push "${{ secrets.ACR_LOGIN_SERVER }}/$SIGNED_IMAGE"
