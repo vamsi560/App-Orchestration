@@ -53,7 +53,7 @@ jobs:
 
       - name: Sign the image
         run: |
-          cosign sign --key cosign.key vamsisss/cosign:signed
+          cosign sign --key cosign.key --true vamsisss/cosign:signed
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
 
