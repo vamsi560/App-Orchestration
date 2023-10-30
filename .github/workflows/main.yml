@@ -33,7 +33,7 @@ jobs:
         run: |
           # Build the image
           docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6 .
-          IMAGE_ID=$(docker images -q myapp:latest)
+          IMAGE_ID=$(docker images -q cosign:abc6)
           echo "IMAGE_ID=$IMAGE_ID" >> $GITHUB_ENV
         env:
           ACR_USERNAME: ${{ secrets.ACR_USERNAME }}
@@ -49,6 +49,6 @@ jobs:
           # Retrieve the image ID from the variable
           IMAGE_ID="$IMAGE_ID"
           # Sign the image
-          cosign sign --key cosign.key ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6
+          cosign sign --key cosign.key cosign:abc6
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
