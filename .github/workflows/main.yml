@@ -1,14 +1,14 @@
 name: Build, sign, and push container image
-
+ 
 on:
   push:
     branches:
       - main
-
+ 
 jobs:
-  build-sign-push:
+  build:
     runs-on: ubuntu-latest
-
+ 
     steps:
       - uses: actions/checkout@v3
 
@@ -18,53 +18,44 @@ jobs:
           git config --global user.name "vamsi560"
         env:
           CI: true
-
+ 
       - name: azure login
         run: |
           az login --use-device-code
-
+ 
       - uses: azure/docker-login@v1
         with:
           login-server: ${{ secrets.ACR_LOGIN_SERVER }}
           username: ${{ secrets.ACR_USERNAME }}
           password: ${{ secrets.ACR_PASSWORD }}
-
-      # Build the image and store it in a variable
-      - name: Build the image
-        run: |
-          IMAGE_NAME="${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6"
-          docker build -t $IMAGE_NAME .
-          echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_ENV
-        env:
-          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
-
+ 
+      # Build the image
+      - run: docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6 .
+ 
+      # Push the image to Azure Container Registry
+      - run: docker push ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6
+      
       - name: cosign-installer
-        uses: sigstore/cosign-installer@v2.2.0
+        uses: sigstore/cosign-installer@v2.2.0  
         with:
-          cosign-release: v2.2.0
+          cosign-release: v2.2.0  
 
       # Sign the image
       - name: Sign the image and get digest
         run: |
-          IMAGE_NAME=${{ env.IMAGE_NAME }}
-          cosign sign --key cosign.key $IMAGE_NAME
-          FULL_DIGEST=$(docker inspect --format '{{index .RepoDigests 0}}' $IMAGE_NAME)
+          SIGNED_IMAGE=${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6
+          cosign sign --key cosign.key $SIGNED_IMAGE
+          FULL_DIGEST=$(docker inspect --format '{{index .RepoDigests 0}}' $SIGNED_IMAGE)
           DIGEST=$(echo $FULL_DIGEST | cut -d "@" -f 2)
           echo "DIGEST=$DIGEST" >> $GITHUB_ENV
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
-
+          
       - name: Save digest to a file
         run: |
-          DIGEST=$(cat $GITHUB_ENV | grep DIGEST | cut -d '=' -f 2)
           echo "$DIGEST" > digest.txt
+          git add digest.txt
+          git commit -m "Add digest.txt"
+          git push
         env:
           COSIGN_TOKEN: ${{ secrets.COSIGN_TOKEN }}
-
-      # Push the Docker image to ACR
-      - name: Push the Docker image to ACR
-        run: |
-          IMAGE_NAME=${{ env.IMAGE_NAME }}
-          docker push $IMAGE_NAME
-        env:
-          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
