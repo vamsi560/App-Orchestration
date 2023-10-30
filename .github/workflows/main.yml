@@ -52,13 +52,13 @@ jobs:
 
       - name: Sign the image
         run: |
-          cosign sign -key cosign.key cosign:signed
+          cosign sign --key cosign.key cosign:signed
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
 
       - name: Push the signed image to ACR
         run: |
-          docker tag myapp:signed "${{ secrets.ACR_LOGIN_SERVER }}/cosign:signed"
+          docker tag cosign:signed "${{ secrets.ACR_LOGIN_SERVER }}/cosign:signed"
           docker push "${{ secrets.ACR_LOGIN_SERVER }}/cosign:signed"
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
