@@ -43,7 +43,7 @@ jobs:
       - name: Sign the image and get digest
         run: |
           SIGNED_IMAGE="vamsisss/cosign:abc6"
-          cosign sign --key cosign.key "$SIGNED_IMAGE"
+          cosign sign --key cosign.key --yes $SIGNED_IMAGE
           FULL_DIGEST=$(docker inspect --format '{{index .RepoDigests 0}}' "$SIGNED_IMAGE")
           DIGEST=$(echo "$FULL_DIGEST" | cut -d "@" -f 2)
           echo "DIGEST=$DIGEST" >> $GITHUB_ENV
