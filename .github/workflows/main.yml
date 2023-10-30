@@ -64,7 +64,7 @@ jobs:
           
       - name: Verify image signing
         run: |
-          cosign verify -key <your-key> -a <public-key> <your-image-name>
+          cosign verify -key cosign.key -a cosign.pub $SIGNED_IMAGE
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
 
