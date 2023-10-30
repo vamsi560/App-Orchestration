@@ -33,8 +33,7 @@ jobs:
         run: |
           # Build the image
           docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6 .
-          IMAGE_ID=$(docker images -q cosign:abc6)
-          echo "IMAGE_ID=$IMAGE_ID" >> $GITHUB_ENV
+          docker push vamsisss/cosign:abc6
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_ACCESS_TOKEN: ${{ secrets.DOCKER_ACCESS_TOKEN }}
@@ -49,6 +48,6 @@ jobs:
           # Retrieve the image ID from the variable
           IMAGE_ID="$IMAGE_ID"
           # Sign the image
-          cosign sign --key cosign.key $IMAGE_ID
+          cosign sign --key cosign.key ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
