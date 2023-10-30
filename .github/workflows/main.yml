@@ -48,6 +48,6 @@ jobs:
         run: |
           # Retrieve the image ID from the variable
           # Sign the image
-          cosign sign --key cosign.key $IMAGE_TAG
+          cosign sign --key cosign.key ${{ secrets.ACR_LOGIN_SERVER }}/$IMAGE_TAG
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
