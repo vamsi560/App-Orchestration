@@ -49,6 +49,6 @@ jobs:
           # Retrieve the image ID from the variable
           IMAGE_ID="$IMAGE_ID"
           # Sign the image
-          cosign sign --key cosign.key cosign:abc6
+          cosign sign --key cosign.key $IMAGE_ID
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
