@@ -1,17 +1,16 @@
 name: Build, sign, and push container image
-
+ 
 on:
   push:
     branches:
       - main
-
+ 
 jobs:
-  build-sign-push:
+  build:
     runs-on: ubuntu-latest
-
+ 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Configure Git
         run: |
@@ -19,7 +18,7 @@ jobs:
           git config --global user.name "vamsi560"
         env:
           CI: true
-          
+ 
       - name: azure login
         run: |
           az login --use-device-code
@@ -29,34 +28,22 @@ jobs:
           login-server: ${{ secrets.ACR_LOGIN_SERVER }}
           username: ${{ secrets.ACR_USERNAME }}
           password: ${{ secrets.ACR_PASSWORD }}
-
-
-      - name: Log in to Docker Hub
-        run: |
-          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_ACCESS_TOKEN }}
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_ACCESS_TOKEN: ${{ secrets.DOCKER_ACCESS_TOKEN }}
-
+ 
       - name: Build the image
         run: |
-          docker build -t vamsisss/cosign:abc6 .
-          docker push vamsisss/cosign:abc6
+          # Build the image
+          docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6 .
+          IMAGE_ID=$(docker images -q cosign:latest)
+          echo "IMAGE_ID=$IMAGE_ID" >> $GITHUB_ENV
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_ACCESS_TOKEN: ${{ secrets.DOCKER_ACCESS_TOKEN }}
 
-      - name: cosign-installer
-        uses: sigstore/cosign-installer@v2.2.0
-        with:
-          cosign-release: v2.2.0
-
-      - name: Sign and push the image to ACR
+      - name: Sign the image
         run: |
-          SIGNED_IMAGE="vamsisss/cosign:abc6"
-          cosign sign --key cosign.key --yes $SIGNED_IMAGE
-          docker tag $SIGNED_IMAGE "${{ secrets.ACR_LOGIN_SERVER }}/$SIGNED_IMAGE"
-          docker push "${{ secrets.ACR_LOGIN_SERVER }}/$SIGNED_IMAGE"
+          # Retrieve the image ID from the variable
+          IMAGE_ID="$IMAGE_ID"
+          # Sign the image
+          cosign sign --key cosign.key $IMAGE_ID
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
-
