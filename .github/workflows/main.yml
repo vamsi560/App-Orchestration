@@ -47,14 +47,5 @@ jobs:
         run: |
           SIGNED_IMAGE="cosign:abc6"
           cosign sign --key cosign.key --yes ${{ secrets.ACR_LOGIN_SERVER }}/$SIGNED_IMAGE
-          FULL_DIGEST=$(docker inspect --format '{{index .RepoDigests 0}}' "$SIGNED_IMAGE")
-          DIGEST=$(echo "$FULL_DIGEST" | cut -d "@" -f 2)
-          echo "DIGEST=$DIGEST" >> $GITHUB_ENV
-        env:
-          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
-
-      - name: Save digest to a file
-        run: |
-          echo "$DIGEST" > digest.txt
-        env:
-          COSIGN_TOKEN: ${{ secrets.COSIGN_TOKEN }}
+          cosign triangulate ${{ secrets.ACR_LOGIN_SERVER }}/$SIGNED_IMAGE
+          cosign verify --key cosign.pub ${{ secrets.ACR_LOGIN_SERVER }}/$SIGNED_IMAGE
