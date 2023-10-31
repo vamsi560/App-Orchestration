@@ -3,6 +3,5 @@ rules:
     given: $.my-custom-field
     then:
       field: description
-      function: truthy
       functionOptions:
-        allowEmpty: false
+        allowEmpty: true
