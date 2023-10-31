@@ -30,29 +30,31 @@ jobs:
           username: ${{ secrets.ACR_USERNAME }}
           password: ${{ secrets.ACR_PASSWORD }}
 
+      - name: Generate DCT Key Pair
+        run: |
+          docker trust key generate signing
+        env:
+          DOCKER_CONTENT_TRUST_ROOT_PASSPHRASE: ${{ secrets.DCT_ROOT_PASSPHRASE }}
+          DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE: ${{ secrets.DCT_REPO_PASSPHRASE }}
+
+      - name: Add Public Key to ACR
+        run: |
+          az acr trust update --name ${{ secrets.ACR_NAME }} --type aci --public-key /github/workspace/my-key-name.pub
+        env:
+          DCT_REPO_PASSPHRASE: ${{ secrets.DCT_REPO_PASSPHRASE }}
+
       - name: Build the image
         run: |
           docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6 .
+          docker push ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
 
-      - name: Enable Docker Content Trust
-        run: export DOCKER_CONTENT_TRUST=1
-
-      - name: Sign and push the image
+      - name: Sign and push the image with DCT
         run: |
-          # Generate and load delegation key pair if needed
-          docker trust key generate jeff
-          # You can load an existing key if applicable
-          docker trust key load key.pem --name sign
-
-          # Add the delegation public key to the Notary server
-          docker trust signer add --key cert.pem sign ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6
-
-          # Sign and push the image to the registry
-          docker trust sign ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6
-
-          # View remote trust data for the tag or repository
-          docker trust inspect --pretty ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6
+          export DOCKER_CONTENT_TRUST=1
+          docker push ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6
         env:
-          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+          DCT_ROOT_PASSPHRASE: ${{ secrets.DCT_ROOT_PASSPHRASE }}
+          DOCKER_CONTENT_TRUST_ROOT_PASSPHRASE: ${{ secrets.DCT_ROOT_PASSPHRASE }}
+          DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE: ${{ secrets.DCT_REPO_PASSPHRASE }}
