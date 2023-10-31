@@ -49,8 +49,6 @@ jobs:
           cosign sign --key cosign.key --yes ${{ secrets.ACR_LOGIN_SERVER }}/$SIGNED_IMAGE
           cosign triangulate ${{ secrets.ACR_LOGIN_SERVER }}/$SIGNED_IMAGE
           cosign verify --key cosign.pub ${{ secrets.ACR_LOGIN_SERVER }}/$SIGNED_IMAGE
-          docker manifest create cosign ${{ secrets.ACR_LOGIN_SERVER }}/cosign:signed ${{ secrets.ACR_LOGIN_SERVER }}/signature.tx
-          docker manifest annotate cosign cosign.io/signature=signature.txt
-          docker push ${{ secrets.ACR_LOGIN_SERVER }}/cosign:signed
+          docker push ${{ secrets.ACR_LOGIN_SERVER }}/$SIGNED_IMAGE
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
