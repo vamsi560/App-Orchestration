@@ -33,14 +33,26 @@ jobs:
       - name: Build the image
         run: |
           docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6 .
-          docker push ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6
         env:
-          DOCKER_CLI_ACR_LOGIN: 1  # Set this environment variable to use ACR credentials
+          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
 
-      # Sign and push trust metadata for the image
-      - name: Sign and push trust metadata
+      - name: Enable Docker Content Trust
+        run: export DOCKER_CONTENT_TRUST=1
+
+      - name: Sign and push the image
         run: |
-          IMAGE_NAME="${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6"
-          docker trust sign $IMAGE_NAME
+          # Generate and load delegation key pair if needed
+          docker trust key generate jeff
+          # You can load an existing key if applicable
+          docker trust key load key.pem --name sign
+
+          # Add the delegation public key to the Notary server
+          docker trust signer add --key cert.pem sign ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6
+
+          # Sign and push the image to the registry
+          docker trust sign ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6
+
+          # View remote trust data for the tag or repository
+          docker trust inspect --pretty ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6
         env:
-          DOCKER_CLI_ACR_LOGIN: 1  # Set this environment variable to use ACR credentials
+          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
