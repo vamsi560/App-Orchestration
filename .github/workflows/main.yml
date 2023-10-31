@@ -37,6 +37,10 @@ jobs:
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
 
+      - name: Validate YAML files with Spectral
+        run: |
+          docker run --rm -v "$(pwd):/mnt" stoplight/spectral lint /mnt/**/*.yaml
+
       - name: SonarCloud Scan
         uses: sonarsource/sonarcloud-github-action@master
         with:
