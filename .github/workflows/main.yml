@@ -49,14 +49,13 @@ jobs:
           cosign sign --key cosign.key --yes ${{ secrets.ACR_LOGIN_SERVER }}/$SIGNED_IMAGE
           cosign triangulate ${{ secrets.ACR_LOGIN_SERVER }}/$SIGNED_IMAGE
           cosign verify --key cosign.pub ${{ secrets.ACR_LOGIN_SERVER }}/$SIGNED_IMAGE
-          docker tag $IMAGE_TAG "${{ secrets.ACR_LOGIN_SERVER }}/cosign:signed"
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
           
       - name: Create a manifest with signature
         run: |
           # Generate a signature for the image and save it to a file
-          cosign sign --signature=signature.txt ${{ secrets.ACR_LOGIN_SERVER }}/cosign:signed
+          cosign sign --signature=signature.txt ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6
 
           # Create a new manifest that includes the image and the signature file
           docker manifest create cosign ${{ secrets.ACR_LOGIN_SERVER }}/cosign:signed ${{ secrets.ACR_LOGIN_SERVER }}/signature.txt
