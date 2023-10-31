@@ -37,11 +37,18 @@ jobs:
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
 
-      - name: Set DOCKER_CONTENT_TRUST
-        run: export DOCKER_CONTENT_TRUST=1
+      - name: cosign-installer
+        uses: sigstore/cosign-installer@v2.2.0
+        with:
+          cosign-release: v2.2.0
 
-      - name: Sign the image
+      # Sign the image
+      - name: Sign the image and get digest
         run: |
-          docker trust sign everestdemocontainerregistry.azurecr.io/cosign:abc6
+          SIGNED_IMAGE="cosign:abc6"
+          cosign sign --key cosign.key --yes ${{ secrets.ACR_LOGIN_SERVER }}/$SIGNED_IMAGE
+          cosign triangulate ${{ secrets.ACR_LOGIN_SERVER }}/$SIGNED_IMAGE
+          cosign verify --key cosign.pub ${{ secrets.ACR_LOGIN_SERVER }}/$SIGNED_IMAGE
+          docker tag $IMAGE_TAG "${{ secrets.ACR_LOGIN_SERVER }}/cosign:signed"
         env:
-          DCT_PUBLIC_KEY: ${{ secrets.DCT_PUBLIC_KEY }}
+          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
