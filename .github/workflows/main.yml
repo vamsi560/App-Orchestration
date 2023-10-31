@@ -40,11 +40,9 @@ jobs:
       - name: SonarCloud Scan
         uses: sonarsource/sonarcloud-github-action@master
         with:
-           organization: ${{ secrets.SONARCLOUD_ORGANIZATION }} 
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          sonar.projectKey: vamsi560_CosignimageSigning
-          sonar.organization: vamsi560
+           args: >
+             -Dsonar.organization=vamsi560
+             -Dsonar.projectKey=vamsi560_CosignimageSigning
           
       - name: cosign-installer
         uses: sigstore/cosign-installer@v2.2.0
