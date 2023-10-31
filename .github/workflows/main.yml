@@ -42,7 +42,7 @@ jobs:
 
       - name: Sign the image
         run: |
-          IMAGE_NAME= ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6
+          IMAGE_NAME= cosign:abc6
           docker trust sign $IMAGE_NAME
         env:
           DCT_PUBLIC_KEY: ${{ secrets.DCT_PUBLIC_KEY }}
