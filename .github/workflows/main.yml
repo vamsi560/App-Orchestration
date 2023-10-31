@@ -54,7 +54,8 @@ jobs:
           
       - name: Tag and annotate image
         run: |
-          docker tag cosign:abc6 ${{ secrets.ACR_LOGIN_SERVER }}/$SIGNED_IMAGE --annotation cosign.io/signature=<signature>
+          SIGNED_IMAGE="cosign:abc6"
+          docker tag cosign:abc6 ${{ secrets.ACR_LOGIN_SERVER }}/$SIGNED_IMAGE --annotation cosign.io/signature=$signature
         env:
-          SIGNED_IMAGE: ${{ secrets.ACR_LOGIN_SERVER }}/my-signed-image
+          SIGNED_IMAGE: ${{ secrets.ACR_LOGIN_SERVER }}/$SIGNED_IMAGE
 
