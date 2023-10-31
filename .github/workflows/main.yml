@@ -43,6 +43,8 @@ jobs:
            args: >
              -Dsonar.organization=vamsi560
              -Dsonar.projectKey=vamsi560_CosignimageSigning
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           
       - name: cosign-installer
         uses: sigstore/cosign-installer@v2.2.0
