@@ -42,7 +42,6 @@ jobs:
 
       - name: Sign the image
         run: |
-          IMAGE_NAME= cosign:abc6
-          docker trust sign $IMAGE_NAME
+          docker trust sign everestdemocontainerregistry.azurecr.io/cosign:abc6
         env:
           DCT_PUBLIC_KEY: ${{ secrets.DCT_PUBLIC_KEY }}
