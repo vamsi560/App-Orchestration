@@ -35,22 +35,12 @@ jobs:
           docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6 .
           docker push ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6
         env:
-          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+          DOCKER_CLI_ACR_LOGIN: 1  # Set this environment variable to use ACR credentials
 
-      - name: cosign-installer
-        uses: sigstore/cosign-installer@v2.2.0
-        with:
-          cosign-release: v2.2.0
-
-      # Sign the image
-      - name: Sign the image and get digest
+      # Sign and push trust metadata for the image
+      - name: Sign and push trust metadata
         run: |
-          SIGNED_IMAGE="cosign:abc6"
-          cosign sign --key cosign.key --yes ${{ secrets.ACR_LOGIN_SERVER }}/$SIGNED_IMAGE
-          cosign triangulate ${{ secrets.ACR_LOGIN_SERVER }}/$SIGNED_IMAGE
-          cosign verify --key cosign.pub ${{ secrets.ACR_LOGIN_SERVER }}/$SIGNED_IMAGE
-          docker tag $IMAGE_TAG "${{ secrets.ACR_LOGIN_SERVER }}/cosign:signed"
+          IMAGE_NAME="${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6"
+          docker trust sign $IMAGE_NAME
         env:
-          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
-          
-          
+          DOCKER_CLI_ACR_LOGIN: 1  # Set this environment variable to use ACR credentials
