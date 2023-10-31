@@ -49,13 +49,8 @@ jobs:
           cosign sign --key cosign.key --yes ${{ secrets.ACR_LOGIN_SERVER }}/$SIGNED_IMAGE
           cosign triangulate ${{ secrets.ACR_LOGIN_SERVER }}/$SIGNED_IMAGE
           cosign verify --key cosign.pub ${{ secrets.ACR_LOGIN_SERVER }}/$SIGNED_IMAGE
+          docker tag $IMAGE_TAG "${{ secrets.ACR_LOGIN_SERVER }}/cosign:signed"
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
           
-      - name: Tag and annotate image
-        run: |
-          SIGNED_IMAGE="cosign:abc6"
-          docker tag cosign:abc6 cosign:abc6 --annotation cosign.io/signature=$signature
-        env:
-          SIGNED_IMAGE: ${{ secrets.ACR_LOGIN_SERVER }}/$SIGNED_IMAGE
-
+          
