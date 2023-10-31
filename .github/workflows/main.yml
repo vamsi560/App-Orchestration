@@ -39,7 +39,7 @@ jobs:
 
       - name: Validate YAML files with Spectral
         run: |
-          docker run --rm -v "$(pwd):/mnt" stoplight/spectral lint /mnt/**/*.yaml --ruleset spectral.yml
+          docker run --rm -v "$(pwd):/mnt" stoplight/spectral lint /mnt/**/*.yaml --ruleset /mnt/spectral.yml
 
 
       - name: SonarCloud Scan
