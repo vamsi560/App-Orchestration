@@ -79,14 +79,14 @@ jobs:
     needs: [build-sign-push]
     steps:
       - name: Use build-steps
-        uses: ./.github/workflows/build-steps.yml
+        uses: ./.github/workflows/main.yml
 
   Dev:
     runs-on: 'ubuntu-latest'
     needs: [build-sign-push]
     steps:
       - name: Use build-steps
-        uses: ./.github/workflows/build-steps.yml
+        uses: ./.github/workflows/main.yml
   
        
        
