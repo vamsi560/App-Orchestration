@@ -56,6 +56,13 @@ jobs:
         with:
           cosign-release: v2.2.0
 
+      # Archive cosign.pub as an artifact
+      - name: Archive cosign.pub
+        uses: actions/upload-artifact@v2
+        with:
+          name: cosign-pub
+          path: cosign.pub
+
       # Sign the image
       - name: Sign the image and get digest
         run: |
@@ -66,3 +73,20 @@ jobs:
           docker push ${{ secrets.ACR_LOGIN_SERVER }}/$SIGNED_IMAGE
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+          
+  UAT:
+    runs-on: 'ubuntu-latest'
+    needs: build-sign-push
+    steps:
+      - name: Use build-steps
+        uses: ./.github/workflows/build-steps.yml
+
+  Dev:
+    runs-on: 'ubuntu-latest'
+    needs: build-sign-push
+    steps:
+      - name: Use build-steps
+        uses: ./.github/workflows/build-steps.yml
+  
+       
+       
