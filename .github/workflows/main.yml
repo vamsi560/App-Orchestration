@@ -76,14 +76,14 @@ jobs:
           
   UAT:
     runs-on: 'ubuntu-latest'
-    needs: build-sign-push
+    needs: [build-sign-push]
     steps:
       - name: Use build-steps
         uses: ./.github/workflows/build-steps.yml
 
   Dev:
     runs-on: 'ubuntu-latest'
-    needs: build-sign-push
+    needs: [build-sign-push]
     steps:
       - name: Use build-steps
         uses: ./.github/workflows/build-steps.yml
