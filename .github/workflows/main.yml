@@ -195,7 +195,7 @@ jobs:
 
       # Archive cosign.pub as an artifact
       - name: Archive cosign.pub
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: cosign-pub
           path: cosign.pub
@@ -210,3 +210,15 @@ jobs:
           docker push ${{ secrets.ACR_LOGIN_SERVER }}/$SIGNED_IMAGE
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}  
+
+      - name: CodeScan Scanner
+        # You may pin to the exact commit or the version.
+        # uses: codescan-io/codescan-scanner-action@34bb1239ae63550b540bb82f8f5de370ecb34d99
+        uses: codescan-io/codescan-scanner-action@1.4
+        with:
+          # CodeScan Organization Key
+          organization: app.codescan.io/organizations/cosign
+          # CodeScan Project Key
+          projectKey: vamsi560-CosignimageSigning
+          # CodeScan Login Key
+          login: auth0|654344c26432acc5bb266e68
