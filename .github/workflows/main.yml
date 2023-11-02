@@ -83,7 +83,7 @@ jobs:
       - name: Sign the image and get digest
         run: |
           SIGNED_IMAGE="cosign:abc6"
-          cosign sign --key cosign.key --yes ${{ secrets.ACR_LOGIN_SERVER }}/$SIGNED_IMAGE
+          cosign sign --key azurekms://keyvault-devsecops2.vault.azure.net/cosignkey --yes ${{ secrets.ACR_LOGIN_SERVER }}/$SIGNED_IMAGE
           cosign triangulate ${{ secrets.ACR_LOGIN_SERVER }}/$SIGNED_IMAGE
           cosign verify --key cosign.pub ${{ secrets.ACR_LOGIN_SERVER }}/$SIGNED_IMAGE | jq -r .
           docker push ${{ secrets.ACR_LOGIN_SERVER }}/$SIGNED_IMAGE
