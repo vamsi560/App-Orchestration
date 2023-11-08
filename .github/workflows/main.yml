@@ -30,13 +30,6 @@ jobs:
           username: ${{ secrets.ACR_USERNAME }}
           password: ${{ secrets.ACR_PASSWORD }}
 
-      - name: Build the image
-        run: |
-          docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6 .
-          docker push ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6
-        env:
-          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
-
       - name: Validate YAML files with Spectral
         run: |
           docker run --rm -v "$(pwd):/mnt" stoplight/spectral lint /mnt/**/*.yaml --ruleset /mnt/spectral.yml
@@ -50,6 +43,10 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           
+      - name: Build the image
+        run: |
+          docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6 .
+          docker push ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6      
       - name: cosign-installer
         uses: sigstore/cosign-installer@v2.2.0
         with:
@@ -71,8 +68,6 @@ jobs:
           cosign triangulate ${{ secrets.ACR_LOGIN_SERVER }}/$SIGNED_IMAGE
           cosign verify --key cosign.pub ${{ secrets.ACR_LOGIN_SERVER }}/$SIGNED_IMAGE | jq -r .
           docker push ${{ secrets.ACR_LOGIN_SERVER }}/$SIGNED_IMAGE
-        env:
-          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
           
   UAT:
     runs-on: 'ubuntu-latest'
