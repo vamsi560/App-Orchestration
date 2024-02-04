@@ -62,7 +62,7 @@ jobs:
       # Sign the image
       - name: Sign the image and get digest
         run: |
-          cosign sign --key cosign.key --yes ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6
+          cosign sign --key cosign.key ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6
           cosign triangulate ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6
           cosign verify --key cosign.pub ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6 | jq -r .
           docker push ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6
