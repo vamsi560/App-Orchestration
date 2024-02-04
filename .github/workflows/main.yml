@@ -75,5 +75,4 @@ jobs:
           app-name: node-rn
           publish-profile: ${{ secrets.azureWebAppPublishProfile }}
           images: ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6
-          multi-container-config-type: 'compose'
           
