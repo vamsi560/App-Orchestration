@@ -66,4 +66,6 @@ jobs:
           cosign triangulate ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6
           cosign verify --key cosign.pub ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6 | jq -r .
           docker push ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6
+        env:
+          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
           
