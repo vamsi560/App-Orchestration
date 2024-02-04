@@ -68,4 +68,11 @@ jobs:
           docker push ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-container-deploy@v1
+        with:
+          app-name: 'containerizationapp'  # Replace with your Azure Web App name
+          images: ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6
+          multi-container-config-type: 'compose'
           
