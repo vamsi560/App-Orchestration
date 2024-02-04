@@ -69,10 +69,11 @@ jobs:
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
 
-      - name: Deploy to Azure Web App
-        uses: azure/webapps-container-deploy@v1
+      - name: 'Run Azure webapp deploy action using publish profile credentials'
+        uses: azure/webapps-deploy@v2
         with:
-          app-name: 'containerizationapp'  # Replace with your Azure Web App name
+          app-name: node-rn
+          publish-profile: ${{ secrets.azureWebAppPublishProfile }}
           images: ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6
           multi-container-config-type: 'compose'
           
