@@ -75,4 +75,5 @@ jobs:
           app-name: containerizationapp
           publish-profile: ${{ secrets.azureWebAppPublishProfile }}
           images: ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6
+          multi-container-config-type: 'compose'
           
