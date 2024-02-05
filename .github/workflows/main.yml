@@ -45,8 +45,8 @@ jobs:
           
       - name: Build the image
         run: |
-          docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6 .
-          docker push ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6      
+          docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/cosign:1 .
+          docker push ${{ secrets.ACR_LOGIN_SERVER }}/cosign:1     
       - name: cosign-installer
         uses: sigstore/cosign-installer@v2.2.0
         with:
@@ -62,18 +62,9 @@ jobs:
       # Sign the image
       - name: Sign the image and get digest
         run: |
-          cosign sign --key cosign.key ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6
-          cosign triangulate ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6
+          cosign sign --key cosign.key ${{ secrets.ACR_LOGIN_SERVER }}/cosign:1
+          cosign triangulate ${{ secrets.ACR_LOGIN_SERVER }}/cosign:1
           cosign verify --key cosign.pub ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6 | jq -r .
-          docker push ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6
+          docker push ${{ secrets.ACR_LOGIN_SERVER }}/cosign:1
         env:
-          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
-
-      - name: 'Run Azure webapp deploy action using publish profile credentials'
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: containerizationapp
-          publish-profile: ${{ secrets.azureWebAppPublishProfile }}
-          images: ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6
-          configuration-file: '/home/site/wwwroot/hostingstart.html'
-          
+          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}          
