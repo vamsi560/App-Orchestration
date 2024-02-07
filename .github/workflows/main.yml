@@ -32,7 +32,11 @@ jobs:
 
       - name: Validate YAML files with Spectral
         run: |
-          docker run --rm -v "$(pwd):/mnt" stoplight/spectral lint /mnt/**/*.yaml --ruleset /mnt/spectral.yml  
+          docker run --rm -v "$(pwd):/mnt" stoplight/spectral lint /mnt/**/*.yaml --ruleset /mnt/spectral.yml 
+
+      - name: maven install
+        run:
+          mvn clean package
 
       - name: Build the image
         run: |
