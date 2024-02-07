@@ -40,8 +40,8 @@ jobs:
 
       - name: Build the image
         run: |
-          docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/cosign:1 .
-          docker push ${{ secrets.ACR_LOGIN_SERVER }}/cosign:1
+          docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/docker-java:1.0 .
+          docker push ${{ secrets.ACR_LOGIN_SERVER }}/docker-java:1.0
       - name: cosign-installer
         uses: sigstore/cosign-installer@v2.2.0
         with:
@@ -57,9 +57,9 @@ jobs:
       # Sign the image
       - name: Sign the image and get digest
         run: |
-          cosign sign --key cosign.key ${{ secrets.ACR_LOGIN_SERVER }}/cosign:1
-          cosign triangulate ${{ secrets.ACR_LOGIN_SERVER }}/cosign:1
-          cosign verify --key cosign.pub ${{ secrets.ACR_LOGIN_SERVER }}/cosign:1 | jq -r .
-          docker push ${{ secrets.ACR_LOGIN_SERVER }}/cosign:1
+          cosign sign --key cosign.key ${{ secrets.ACR_LOGIN_SERVER }}/docker-java:1.0
+          cosign triangulate ${{ secrets.ACR_LOGIN_SERVER }}/docker-java:1.0
+          cosign verify --key cosign.pub ${{ secrets.ACR_LOGIN_SERVER }}/docker-java:1.0 | jq -r .
+          docker push ${{ secrets.ACR_LOGIN_SERVER }}/docker-java:1.0
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}          
