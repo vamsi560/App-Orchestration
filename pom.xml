@@ -52,12 +52,27 @@
 
     <dependencies>
         <dependency>
+<<<<<<< HEAD
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <version>3.1.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
+=======
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.1.0</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+>>>>>>> 10473217c5359a4ecbb339589f5b234f5f56b3cd
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
 			<version>2.6</version>
@@ -144,5 +159,9 @@
 			<scope>system</scope>
 			<systemPath>${project.basedir}/web/WEB-INF/lib/webservices-rt-2.3.1.jar</systemPath>
 		</dependency>
+<<<<<<< HEAD
+=======
+	</dependencies>
+>>>>>>> 10473217c5359a4ecbb339589f5b234f5f56b3cd
     </dependencies>
 </project>
