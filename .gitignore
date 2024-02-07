@@ -1,1 +1,5 @@
-/target/
+build/*
+target/*
+dist/*
+.settings/*
+*.class
