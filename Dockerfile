@@ -1,15 +1,21 @@
-FROM openjdk:8-jdk-alpine
-ARG JAR_FILE=target/find-links.jar
-ARG JAR_LIB_FILE=target/lib/
+# For Java 8, try this
+# FROM openjdk:8-jdk-alpine
 
-# cd /usr/local/runme
-WORKDIR /usr/local/runme
+# For Java 11, try this
+FROM adoptopenjdk/openjdk11:alpine-jre
 
-# cp target/app.jar /usr/local/runme/app.jar
+# Refer to Maven build -> finalName
+ARG JAR_FILE=target/spring-boot-web.jar
+
+# cd /opt/app
+WORKDIR /opt/app
+
+# cp target/spring-boot-web.jar /opt/app/app.jar
 COPY ${JAR_FILE} app.jar
 
-# cp -rf target/lib/  /usr/local/runme/lib
-ADD ${JAR_LIB_FILE} lib/
-
-# java -jar /usr/local/runme/app.jar
+# java -jar /opt/app/app.jar
 ENTRYPOINT ["java","-jar","app.jar"]
+
+## sudo docker run -p 8080:8080 -t docker-spring-boot:1.0
+## sudo docker run -p 80:8080 -t docker-spring-boot:1.0
+## sudo docker run -p 443:8443 -t docker-spring-boot:1.0
