@@ -32,7 +32,16 @@ jobs:
 
       - name: Validate YAML files with Spectral
         run: |
-          docker run --rm -v "$(pwd):/mnt" stoplight/spectral lint /mnt/**/*.yaml --ruleset /mnt/spectral.yml         
+          docker run --rm -v "$(pwd):/mnt" stoplight/spectral lint /mnt/**/*.yaml --ruleset /mnt/spectral.yml  
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '17'
+
+      - name: Compile Java Code
+        run: javac HelloWorld.java
           
       - name: Build the image
         run: |
