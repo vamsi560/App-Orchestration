@@ -41,7 +41,7 @@ jobs:
           java-version: '17'
 
       - name: Compile Java Code
-        run: javac HelloWorld.java
+        run: javac Helloworld.java
           
       - name: Build the image
         run: |
