@@ -37,7 +37,8 @@ jobs:
       - name: Build the image
         run: |
           docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/cosign:1 .
-          docker push ${{ secrets.ACR_LOGIN_SERVER }}/cosign:1     
+          docker push ${{ secrets.ACR_LOGIN_SERVER }}/cosign:1
+          docker run -p 8080:8080 cosign
       - name: cosign-installer
         uses: sigstore/cosign-installer@v2.2.0
         with:
