@@ -40,10 +40,13 @@ jobs:
         uses: javiertuya/sonarqube-action@v1.3.0
         with:
           github-token: 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
-          sonar-token: ${{ secrets.SONAR_TOKEN }}
           sonar-host-url: https://sonarcloud.io
-          sonar.projectKey: vamsi560_CosignimageSigning
-          sonar.organization: vamsi560
+          args: >
+             -Dsonar.organization=vamsi560
+             -Dsonar.projectKey=vamsi560_CosignimageSigning
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          
           
       - name: Build the image
         run: |
