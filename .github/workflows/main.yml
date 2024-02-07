@@ -34,11 +34,14 @@ jobs:
         run: |
           docker run --rm -v "$(pwd):/mnt" stoplight/spectral lint /mnt/**/*.yaml --ruleset /mnt/spectral.yml
 
-      - name: SonarCloud Scan and Maven Build
-        run: |
-          mvn clean install sonar:sonar -Dsonar.organization=vamsi560 -Dsonar.projectKey=vamsi560_CosignimageSigning
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      - name: SonarQube Maven Scan
+        # You may pin to the exact commit or the version.
+        # uses: javiertuya/sonarqube-action@aa12013199d71e4d3cf70322d3b8e84598310c55
+        uses: javiertuya/sonarqube-action@v1.3.0
+        with:
+          github-token: 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
+          sonar-token: ${{ secrets.SONAR_TOKEN }}
+          sonar-host-url: https://sonarcloud.io          
 
       - name: SonarCloud Scan
         uses: sonarsource/sonarcloud-github-action@master
