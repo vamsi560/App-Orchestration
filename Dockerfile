@@ -1,18 +1,15 @@
-#
-# Build stage
-#
-FROM maven:3.6.0-jdk-11-slim AS build
-WORKDIR /build
-COPY pom.xml .
-COPY src ./src
-COPY web ./web
-RUN mvn clean package
+FROM openjdk:8-jdk-alpine
+ARG JAR_FILE=target/find-links.jar
+ARG JAR_LIB_FILE=target/lib/
 
-#
-# Package stage
-#
-FROM tomcat:8.5.72-jre11-openjdk-slim
-COPY tomcat-users.xml /usr/local/tomcat/conf
-COPY --from=build /build/target/*.war /usr/local/tomcat/webapps/FlightBookingSystemSample.war
-EXPOSE 8080
-CMD ["catalina.sh", "run"]
+# cd /usr/local/runme
+WORKDIR /usr/local/runme
+
+# cp target/app.jar /usr/local/runme/app.jar
+COPY ${JAR_FILE} app.jar
+
+# cp -rf target/lib/  /usr/local/runme/lib
+ADD ${JAR_LIB_FILE} lib/
+
+# java -jar /usr/local/runme/app.jar
+ENTRYPOINT ["java","-jar","app.jar"]
