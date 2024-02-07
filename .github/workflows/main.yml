@@ -38,7 +38,7 @@ jobs:
         run: |
           docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/cosign:1 .
           docker push ${{ secrets.ACR_LOGIN_SERVER }}/cosign:1
-          docker run -p 8080:8080 cosign
+          docker run -p 8080:8080 ${{ secrets.ACR_LOGIN_SERVER }}/cosign:1
       - name: cosign-installer
         uses: sigstore/cosign-installer@v2.2.0
         with:
@@ -56,7 +56,7 @@ jobs:
         run: |
           cosign sign --key cosign.key ${{ secrets.ACR_LOGIN_SERVER }}/cosign:1
           cosign triangulate ${{ secrets.ACR_LOGIN_SERVER }}/cosign:1
-          cosign verify --key cosign.pub ${{ secrets.ACR_LOGIN_SERVER }}/cosign:abc6 | jq -r .
+          cosign verify --key cosign.pub ${{ secrets.ACR_LOGIN_SERVER }}/cosign:1 | jq -r .
           docker push ${{ secrets.ACR_LOGIN_SERVER }}/cosign:1
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}          
