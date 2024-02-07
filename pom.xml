@@ -42,13 +42,10 @@
             </plugin>
         </plugins>
     </build>
-
+	
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
 	<maven.compiler.target>17</maven.compiler.target>
-    </properties>
-	
-    <properties>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.organization>vamsi560</sonar.organization> <!-- Replace with your organization key -->
         <sonar.projectKey>vamsi560_CosignimageSigning</sonar.projectKey> <!-- Replace with your project key -->
