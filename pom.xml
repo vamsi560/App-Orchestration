@@ -1,15 +1,57 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>AirlinesReservationSample</groupId>
-	<artifactId>AirlinesReservationSample</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<packaging>war</packaging>
-	<name>AirlinesReservationSample</name>
-	<description>Airlines Reservation Sample Web Application</description>
-	<dependencies>
-		<dependency>
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>AirlinesReservationSample</groupId>
+    <artifactId>AirlinesReservationSample</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>war</packaging>
+    <name>AirlinesReservationSample</name>
+    <description>Airlines Reservation Sample Web Application</description>
+
+    <!-- Add SonarQube plugin configuration -->
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.sonarsource.scanner.maven</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <version>3.8.0.2131</version> <!-- Use the latest version -->
+            </plugin>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.3.1</version>
+                <configuration>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                    <webResources>
+                        <resource>
+                            <directory>web</directory>
+                        </resource>
+                    </webResources>
+                    <packagingExcludes>WEB-INF/lib/javax.servlet-api-3.1.0.jar</packagingExcludes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <!-- SonarQube properties -->
+    <properties>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <sonar.organization>vamsi560</sonar.organization> <!-- Replace with your organization key -->
+        <sonar.projectKey>vamsi560_CosignimageSigning</sonar.projectKey> <!-- Replace with your project key -->
+    </properties>
+
+    <dependencies>
+        <dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
 			<version>3.1.0</version>
@@ -109,40 +151,5 @@
 			<systemPath>${project.basedir}/web/WEB-INF/lib/webservices-rt-2.3.1.jar</systemPath>
 		</dependency>
 	</dependencies>
-	<build>
-		<sourceDirectory>src/java</sourceDirectory>
-		<resources>
-			<resource>
-				<directory>src/java</directory>
-				<excludes>
-					<exclude>**/*.java</exclude>
-				</excludes>
-			</resource>
-		</resources>
-		<plugins>
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.8.1</version>
-				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
-					<encoding>UTF-8</encoding>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-war-plugin</artifactId>
-				<version>3.3.1</version>
-				<configuration>
-					<failOnMissingWebXml>false</failOnMissingWebXml>
-					<webResources>
-						<resource>
-							<directory>web</directory>
-						</resource>
-					</webResources>
-					<packagingExcludes>WEB-INF/lib/javax.servlet-api-3.1.0.jar</packagingExcludes>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
+    </dependencies>
 </project>
