@@ -34,6 +34,12 @@ jobs:
         run: |
           docker run --rm -v "$(pwd):/mnt" stoplight/spectral lint /mnt/**/*.yaml --ruleset /mnt/spectral.yml
 
+      - name: SonarCloud Scan and Maven Build
+        run: |
+          mvn clean install sonar:sonar -Dsonar.organization=vamsi560 -Dsonar.projectKey=vamsi560_CosignimageSigning
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
       - name: SonarCloud Scan
         uses: sonarsource/sonarcloud-github-action@master
         with:
